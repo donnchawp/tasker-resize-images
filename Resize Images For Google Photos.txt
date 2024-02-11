@@ -1,0 +1,278 @@
+Task: Resize Jpeg Files And leave Originals
+
+A1: Test File [
+	 Type: Type
+	 Data: Download/WIP
+	 Store Result In: %externalWIP
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+
+A2: Create Directory [
+	 Directory: Download/WIP
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+	If  [ %externalWIP !Set ]
+
+A3: Test File [
+	 Type: Type
+	 Data: Download/jpeg
+	 Store Result In: %externaljpeg
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+
+A4: Create Directory [
+	 Directory: Download/jpeg
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+	If  [ %externaljpeg !Set ]
+
+A5: Test File [
+	 Type: Type
+	 Data: DCIM/Resized
+	 Store Result In: %externalresized
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+
+A6: Create Directory [
+	 Directory: DCIM/Resized
+	 Use Global Namespace: On
+	 Continue Task After Error:On ]
+	If  [ %externalresized !Set ]
+
+A7: List Files [
+	 Directory: DCIM/Camera
+	 Match: *.jpg
+	 Sort Select: Modification Date, Reverse
+	 Variable Array: %jpegFilestomove
+	 Use Global Namespace: On ]
+
+A8: If [ %jpegFilestomove(#) > 0 ]
+
+	A9: If [ %CameraActive eq 1 ]
+
+	    A10: Wait [
+	          MS: 0
+	          Seconds: 3
+	          Minutes: 0
+	          Hours: 0
+	          Days: 0 ]
+
+	A11: End If
+
+A12: End If
+
+A13: For [
+	  Variable: %filetoresize
+	  Items: %jpegFilestomove()
+	  Structure Output (JSON, etc): On ]
+
+	A14: Variable Split [
+	      Name: %filetoresize
+	      Splitter: / ]
+
+	A15: Test File [
+	      Type: Type
+	      Data: DCIM/Resized/%filetoresize7
+	      Store Result In: %resizedExists
+	      Use Global Namespace: On
+	      Continue Task After Error:On ]
+
+	A16: If [ %resizedExists neq file ]
+
+	    A17: If [ %CameraActive neq 1 ]
+
+	        A18: Flash [
+	              Text: New file: %filetoresize7
+	              Continue Task Immediately: On
+	              Dismiss On Click: On ]
+
+	    A19: End If
+
+	    A20: Java Function [
+	          Return: ei
+	          Class Or Object: ExifInterface
+	          Function: new
+	         {ExifInterface} (String)
+	          Param 1 (String): %filetoresize ]
+
+	    A21: Java Function [
+	          Return: %gpslatitude
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): GPSLatitude ]
+
+	    A22: Java Function [
+	          Return: %gpslatituderef
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): GPSLatitudeRef ]
+
+	    A23: Java Function [
+	          Return: %gpslongitude
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): GPSLongitude ]
+
+	    A24: Java Function [
+	          Return: %gpslongituderef
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): GPSLongitudeRef ]
+
+	    A25: Java Function [
+	          Return: %gpsaltitude
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): GPSAltitude ]
+
+	    A26: Java Function [
+	          Return: %datetimeoriginal
+	          Class Or Object: ei
+	          Function: getAttribute
+	         {String} (String)
+	          Param 1 (String): DateTimeOriginal ]
+
+	    A27: Load Image [
+	          Source: %filetoresize
+	          Respect EXIF Orientation: On ]
+
+	    A28: Resize Image [
+	          Width: 1280
+	          Height: 0 ]
+
+	    A29: Variable Split [
+	          Name: %filetoresize
+	          Splitter: / ]
+
+	    A30: Save Image [
+	          File: DCIM/Resized/%filetoresize7
+	          Image Quality: 75
+	          Delete From Memory After: On ]
+
+	    A31: Java Function [
+	          Return: ei
+	          Class Or Object: ExifInterface
+	          Function: new
+	         {ExifInterface} (String)
+	          Param 1 (String): /storage/emulated/0/DCIM/Resized/%filetoresize7 ]
+
+	    A32: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSLatitude
+	          Param 2 (String): %gpslatitude ]
+
+	    A33: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSLatitudeRef
+	          Param 2 (String): %gpslatituderef ]
+
+	    A34: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSLongitude
+	          Param 2 (String): %gpslongitude ]
+
+	    A35: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSLongitudeRef
+	          Param 2 (String): %gpslongituderef ]
+
+	    A36: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSAltitude
+	          Param 2 (String): %gpsaltitude ]
+
+	    A37: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): GPSAltitudeRef
+	          Param 2 (String): %gpsaltituderef ]
+
+	    A38: Java Function [
+	          Class Or Object: ei
+	          Function: setAttribute
+	         {} (String, String)
+	          Param 1 (String): DateTimeOriginal
+	          Param 2 (String): %datetimeoriginal ]
+
+	    A39: Java Function [
+	          Class Or Object: ei
+	          Function: saveAttributes
+	         {} () ]
+
+	    A40: Scan Media [
+	          File: DCIM/Resized/%filetoresize7 ]
+
+	A41: End If
+
+A42: End For
+
+A43: Run Shell [
+	  Command: touch /sdcard/DCIM/Camera/.nomedia
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On
+	  Continue Task After Error:On ]
+
+A44: Run Shell [
+	  Command: touch /sdcard/Download/jpeg/.nomedia
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On
+	  Continue Task After Error:On ]
+
+A45: Run Shell [
+	  Command: mv /sdcard/DCIM/Expert Raw/*.jpg /sdcard/Download/jpeg/
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On
+	  Continue Task After Error:On ]
+
+A46: Run Shell [
+	  Command: mv /sdcard/DCIM/Expert Raw/*.dng /sdcard/Download/dng/
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On
+	  Continue Task After Error:On ]
+
+A47: List Files [
+	  Directory: DCIM/Camera
+	  Match: *.mp4
+	  Sort Select: Modification Date, Reverse
+	  Variable Array: %mp4Filestomove
+	  Use Global Namespace: On ]
+
+A48: Run Shell [
+	  Command: mv /sdcard/DCIM/Camera/*.mp4 /sdcard/Download/jpeg/
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On ]
+	If  [ %mp4Filestomove Set ]
+
+A49: Run Shell [
+	  Command: rm -fr /sdcard/DCIM/.thumbnails/*.jpg
+	  Timeout (Seconds): 0
+	  Use Global Namespace: On ]
+
+A50: Run Shell [
+	  Command: find /sdcard/DCIM/Resized/ -mtime +365 -print -delete
+	  Timeout (Seconds): 0
+	  Store Output In: %oldfiles
+	  Use Global Namespace: On ]
+
+A51: Flash [
+	  Text: Finished Processing Images
+	  Continue Task Immediately: On
+	  Dismiss On Click: On ]
+
+
