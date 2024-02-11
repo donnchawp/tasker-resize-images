@@ -1,4 +1,4 @@
-# tasker-resize-images
+# Resize Images task for Tasker
 Automatically resize images on your Android phone using [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm).
 
 This task can be found on Taskernet [here](https://taskernet.com/shares/?user=AS35m8lp%2FKkm%2B8UbZhHqE5Y4xnByvXtx0JMDOCGm0w6uyiTpJO0jakx9uvUppJnAx%2BE%3D&id=Task%3AResize+Jpeg+Files+And+leave+Originals#).
